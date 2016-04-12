@@ -33,13 +33,11 @@ public:
     static inline ProblemType getProblemType();
     static void setInitPopSize(int initSize);
     static int getInitPopSize();
-    static GenePool& getPopulation();
-    static GenePool& getParentPool();
-    static GenePool& getOffspringPool();
-    static GenePool& getJointPool();
     static SetOfPoints& getSetOfPoints();
     static void setSolution(Individual& sol);
     static Individual& getSolution();
+    static void setRival(Individual& sol);
+    static Individual& getRival();
 
 private:
     static ProblemType problemType;
@@ -54,8 +52,12 @@ private:
 
     static SetOfPoints setOfPoints;
     static IndivPtr solution;
+    static IndivPtr fittestRivalOfSol;
 
     static std::mt19937 mersenne;
+
+    static void initializePop();
+    static IndivPtr generateIndiv();
 };
 
 #endif // CONTROLLER_H_INCLUDED

@@ -1,0 +1,72 @@
+# depslib dependency file v1.0
+1460494387 source:c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\curveparams.cpp
+	"CurveParams.h"
+	"Controller.h"
+
+1460297107 c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\curveparams.h
+	"Individual.h"
+	"SetOfPoints.h"
+
+1460492957 c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\individual.h
+	<cmath>
+	<iostream>
+	<memory>
+
+1460481608 c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\setofpoints.h
+	<vector>
+	"Point.h"
+
+1460426967 c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\point.h
+	<iostream>
+
+1460502589 c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\controller.h
+	<cstdlib>
+	<ctime>
+	<random>
+	<iostream>
+	"GenePool.h"
+	"SetOfPoints.h"
+	"LangermannPoint.h"
+	"CurveParams.h"
+
+1460493968 c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\genepool.h
+	"Individual.h"
+	<vector>
+	<iostream>
+
+1460297107 c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\langermannpoint.h
+	"Individual.h"
+
+1460494164 source:c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\genepool.cpp
+	"GenePool.h"
+	"Controller.h"
+	<algorithm>
+	<exception>
+
+1460414274 source:c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\individual.cpp
+	"Individual.h"
+	"Controller.h"
+	"LangermannPoint.h"
+	"CurveParams.h"
+
+1460494511 source:c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\langermannpoint.cpp
+	"LangermannPoint.h"
+	"Controller.h"
+
+1460425374 source:c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\main.cpp
+	"Controller.h"
+	"LangermannPoint.h"
+
+1460426948 source:c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\point.cpp
+	"Point.h"
+
+1460492755 source:c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\setofpoints.cpp
+	"SetOfPoints.h"
+	"Controller.h"
+	<iostream>
+
+1460501554 source:c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\controller.cpp
+	"Controller.h"
+	"LangermannPoint.h"
+	"CurveParams.h"
+
