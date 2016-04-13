@@ -13,12 +13,21 @@ typedef std::shared_ptr<Individual> IndivPtr;
 
 class Individual
 {
+private:
+    static float mutationVal;
+
 protected:
     float fitness;
     float fitnessPercent;
-    const float MUTATION_VAL = 0.25;
 
 public:
+
+    static const float MUTATION_VAL;// = 0.25
+    static const float BOOSTED_MUTATION_VAL;// = 1.5
+    static void resetMutationVal();
+    static void boostMutationVal();
+    static float getMutationVal();
+
     Individual();
     Individual(Individual& other);
     virtual ~Individual();

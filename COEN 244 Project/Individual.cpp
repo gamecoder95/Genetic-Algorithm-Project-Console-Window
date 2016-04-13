@@ -3,6 +3,26 @@
 #include "LangermannPoint.h"
 #include "CurveParams.h"
 
+const float Individual::MUTATION_VAL = 0.25f;
+const float Individual::BOOSTED_MUTATION_VAL = 1.50f;
+
+float Individual::mutationVal = Individual::MUTATION_VAL;
+
+void Individual::resetMutationVal()
+{
+    mutationVal = MUTATION_VAL;
+}
+
+void Individual::boostMutationVal()
+{
+    mutationVal = BOOSTED_MUTATION_VAL;
+}
+
+float Individual::getMutationVal()
+{
+    return mutationVal;
+}
+
 Individual::Individual() : fitness(0.0f), fitnessPercent(0.0f)
 {
     // Default constructor, initialize fields to zero.

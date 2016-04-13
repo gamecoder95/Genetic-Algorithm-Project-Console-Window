@@ -117,10 +117,10 @@ Individual* CurveParams::crossOverAndMutate(Individual& other)
 
 void CurveParams::mutate()
 {
-    m_a += (m_a != 0.0f)? Controller::getRandFloatInRange(-MUTATION_VAL, MUTATION_VAL) : 0.0f;
-    m_b += (m_b != 0.0f)? Controller::getRandFloatInRange(-MUTATION_VAL, MUTATION_VAL) : 0.0f;
-    m_c += (m_c != 0.0f)? Controller::getRandFloatInRange(-MUTATION_VAL, MUTATION_VAL) : 0.0f;
-    m_d += (m_d != 0.0f)? Controller::getRandFloatInRange(-MUTATION_VAL, MUTATION_VAL) : 0.0f;
+    m_a += (m_a != 0.0f)? Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal()) : 0.0f;
+    m_b += (m_b != 0.0f)? Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal()) : 0.0f;
+    m_c += (m_c != 0.0f)? Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal()) : 0.0f;
+    m_d += (m_d != 0.0f)? Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal()) : 0.0f;
     setFitness(m_a, m_b, m_c, m_d, Controller::getSetOfPoints());
 }
 

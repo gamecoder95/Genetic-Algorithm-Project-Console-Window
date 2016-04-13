@@ -31,6 +31,21 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="Controller.cpp" />
+		<Unit filename="Controller.h" />
+		<Unit filename="CurveParams.cpp" />
+		<Unit filename="CurveParams.h" />
+		<Unit filename="GenePool.cpp" />
+		<Unit filename="GenePool.h" />
+		<Unit filename="Individual.cpp" />
+		<Unit filename="Individual.h" />
+		<Unit filename="LangermannPoint.cpp" />
+		<Unit filename="LangermannPoint.h" />
+		<Unit filename="Point.cpp" />
+		<Unit filename="Point.h" />
+		<Unit filename="SetOfPoints.cpp" />
+		<Unit filename="SetOfPoints.h" />
+		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

@@ -68,8 +68,8 @@ Individual* LangermannPoint::crossOverAndMutate(Individual& other)
 
 void LangermannPoint::mutate()
 {
-    m_x += Controller::getRandFloatInRange(-MUTATION_VAL, MUTATION_VAL);
-    m_y += Controller::getRandFloatInRange(-MUTATION_VAL, MUTATION_VAL);
+    m_x += Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal());
+    m_y += Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal());
     setFitness(m_x, m_y);
 }
 

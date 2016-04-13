@@ -12,6 +12,7 @@ Controller::ProblemType Controller::problemType = Controller::OPTIMIZATION;
 
 int Controller::initPopSize = Controller::DEFAULT_POP_SIZE;
 int Controller::generationCount = 1;
+int Controller::rivalGenCount = 0;
 
 GenePool Controller::population;
 GenePool Controller::parentPool;
@@ -99,6 +100,7 @@ void Controller::run()
 bool Controller::terminationCondition()
 {
     population.sortPool();
+    Individual::resetMutationVal();
 
     // After sorting, the first is the fittest
     if(generationCount <= 1)
@@ -109,6 +111,7 @@ bool Controller::terminationCondition()
     }
     else if(generationCount < MAX_GEN_COUNT)
     {
+        bool needMoreGuys = false;
         if(getSolution() < population[0])
         {
             setSolution(population[0]);
@@ -118,41 +121,48 @@ bool Controller::terminationCondition()
         {
             // If the solution saved from last generation is the same,
             // add half the population size of new individuals.
-            for(int i = population.size()/2; i < population.size(); ++i)
-            {
-                population.pushBackIndiv(generateIndiv());
-            }
+            needMoreGuys = true;
+            Individual::boostMutationVal();
 
-            return false;
         }
         else if(getSolution() > population[0])
         {
-            if(fittestRivalOfSol == nullptr)
+            if(&getRival() == nullptr || rivalGenCount == 0)
             {
-                fittestRivalOfSol = IndivPtr()
+                std::cout<<"HERE 0!"<<std::endl;
+                setRival(population[0]);;
+                rivalGenCount = 1;
             }
-        }
-        /*
-        bool replacedPrevSol = false;
-        if(getSolution() < population[0])
-        {
-            setSolution(population[0]);
-            replacedPrevSol = true;
-        }
+            else if(getRival() == population[0])
+            {
+                std::cout<<"HERE 1"<<std::endl;
 
-        if(getProblemType() == Controller::OPTIMIZATION && !replacedPrevSol)
-        {
-            return true;
-        }
-        else if(getProblemType() == Controller::CURVE_FITTING)
-        {
-            if(abs(getSolution().getFitness()) <= 0.005)
+                if(rivalGenCount <= 3)
+                {
+                    std::cout<<"HERE 2"<<std::endl;
+                    ++rivalGenCount;
+                }
+                else
+                {
+                    std::cout<<"HERE 3"<<std::endl;
+                    rivalGenCount = 0;
+                    needMoreGuys = true;
+                    Individual::boostMutationVal();
+                }
+            }
+            else
             {
                 return true;
             }
         }
-        */
 
+        if(needMoreGuys)
+        {
+            for(int i = population.size()/2; i < population.size(); ++i)
+            {
+                population[i] = *generateIndiv();
+            }
+        }
         population.scramblePool();
         return false;
     }
@@ -225,21 +235,21 @@ Individual& Controller::getSolution()
     return *solution;
 }
 
-void Controller::setSolution(Individual& sol)
+void Controller::setRival(Individual& sol)
 {
     if(problemType == Controller::OPTIMIZATION)
     {
-        solution = IndivPtr(new LangermannPoint(dynamic_cast<LangermannPoint&>(sol)));
+        fittestRivalOfSol = IndivPtr(new LangermannPoint(dynamic_cast<LangermannPoint&>(sol)));
     }
     else
     {
-        solution = IndivPtr(new CurveParams(dynamic_cast<CurveParams&>(sol)));
+        fittestRivalOfSol = IndivPtr(new CurveParams(dynamic_cast<CurveParams&>(sol)));
     }
 }
 
-Individual& Controller::getSolution()
+Individual& Controller::getRival()
 {
-    return *solution;
+    return *fittestRivalOfSol;
 }
 
 int Controller::getRandNumInRange(int low, int high)
@@ -274,92 +284,89 @@ IndivPtr Controller::generateIndiv()
     }
     else
     {
-        int paramToTakeOut = 0;
-        for(int i = 0; i < getInitPopSize(); ++i)
-        {
-            paramToTakeOut = getRandNumInRange(0, 10);
+        int paramToTakeOut = getRandNumInRange(0, 10);
 
-            //Add a curve with parameters missing depending on paramToTakeOut.
-            switch(paramToTakeOut)
-            {
-            case 1:
-                return IndivPtr(new CurveParams(0,
-                                              getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+        //Add a curve with parameters missing depending on paramToTakeOut.
+        switch(paramToTakeOut)
+        {
+        case 1:
+            return IndivPtr(new CurveParams(0,
+                                          getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+                                          getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+                                          getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND)));
+            break;
+
+        case 2:
+            return IndivPtr(new CurveParams(getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+                                              0,
                                               getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
                                               getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND)));
-                break;
+            break;
 
-            case 2:
-                return IndivPtr(new CurveParams(getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
-                                                  0,
-                                                  getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
-                                                  getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND)));
-                break;
+        case 3:
+            return IndivPtr(new CurveParams(getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+                                          getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+                                          0,
+                                          getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND)));
+            break;
 
-            case 3:
-                return IndivPtr(new CurveParams(getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+        case 4:
+            return IndivPtr(new CurveParams(getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
                                               getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+                                              getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+                                              0));
+            break;
+
+        case 5:
+            return IndivPtr(new CurveParams(0,
+                                              getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+                                              getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+                                              0));
+            break;
+
+        case 6:
+            return IndivPtr(new CurveParams(getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+                                              0,
                                               0,
                                               getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND)));
-                break;
+            break;
 
-            case 4:
-                return IndivPtr(new CurveParams(getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
-                                                  getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
-                                                  getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
-                                                  0));
-                break;
-
-            case 5:
-                return IndivPtr(new CurveParams(0,
-                                                  getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
-                                                  getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
-                                                  0));
-                break;
-
-            case 6:
-                return IndivPtr(new CurveParams(getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
-                                                  0,
-                                                  0,
-                                                  getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND)));
-                break;
-
-            case 7:
-                return IndivPtr(new CurveParams(0,
-                                                  0,
-                                                  getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
-                                                  getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND)));
-                break;
-
-            case 8:
-                return IndivPtr(new CurveParams(getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
-                                                  getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
-                                                  0,
-                                                  0));
-                break;
-
-            case 9:
-                return IndivPtr(new CurveParams(0,
-                                                  0,
-                                                  0,
-                                                  getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND)));
-                break;
-
-            case 10:
-                return IndivPtr(new CurveParams(getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
-                                                  0,
-                                                  0,
-                                                  0));
-                break;
-
-            default:
-                return IndivPtr(new CurveParams(getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
-                                              getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+        case 7:
+            return IndivPtr(new CurveParams(0,
+                                              0,
                                               getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
                                               getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND)));
-                break;
-            }
+            break;
 
+        case 8:
+            return IndivPtr(new CurveParams(getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+                                              getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+                                              0,
+                                              0));
+            break;
+
+        case 9:
+            return IndivPtr(new CurveParams(0,
+                                              0,
+                                              0,
+                                              getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND)));
+            break;
+
+        case 10:
+            return IndivPtr(new CurveParams(getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+                                              0,
+                                              0,
+                                              0));
+            break;
+
+        default:
+            return IndivPtr(new CurveParams(getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+                                          getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+                                          getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND),
+                                          getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND)));
+            break;
         }
+
     }
 }
+

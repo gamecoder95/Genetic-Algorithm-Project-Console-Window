@@ -44,6 +44,7 @@ private:
 
     static int initPopSize;
     static int generationCount;
+    static int rivalGenCount;
 
     static GenePool population;
     static GenePool parentPool;
