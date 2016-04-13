@@ -12,7 +12,6 @@ private:
     float m_c;
     float m_d;
 
-    // NOTE: define this only after defining a structure for "Points"
     void setFitness(float a, float b, float c, float d, SetOfPoints& setOfPoints);
     float getYAtXOf(Point& point) const;
 

@@ -5,13 +5,8 @@
 
 GenePool::GenePool()
 {
-    // Default empty constructor
+    //Reserve space for up to 10000 individuals.
     individualList.reserve(10000);
-}
-
-GenePool::~GenePool()
-{
-    //deleteAll();
 }
 
 void GenePool::sortPool()
@@ -29,10 +24,9 @@ Individual& GenePool::operator[](int index)
     }
     catch(std::exception& exception)
     {
-        std::cout<<"Error: index out of bounds. Will exit the program."<<std::endl;
+        std::cout<<"Error in GenePool: index out of bounds. Will exit the program."<<std::endl;
         exit(0);
     }
-
 }
 
 // Get an individual from the list between index 0 and index size - 1
@@ -99,12 +93,6 @@ std::ostream& operator<<(std::ostream& out, GenePool& pool)
     {
         pool.sortPool();
         out<<"This gene pool contains "<<pool.size()<<" individuals: "<<std::endl;
-        /*
-        for(int i = 0; i < pool.size(); ++i)
-        {
-            out<<pool[i]<<std::endl;
-        }
-        */
         out<<"The fittest individual is: "<<pool[0]<<std::endl;
         out<<"The least fit individual is: "<<pool[pool.size() - 1]<<std::endl;
         out<<std::endl;

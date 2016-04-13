@@ -14,7 +14,7 @@ CurveParams::CurveParams(float a, float b, float c, float d) : m_a(a), m_b(b), m
     setFitness(m_a, m_b, m_c, m_d, Controller::getSetOfPoints());
 }
 
-// The fitness function is the Mean Square error function
+// The fitness function is the Root Mean Square error function
 void CurveParams::setFitness(float a, float b, float c, float d, SetOfPoints& setOfPoints)
 {
     float meanSquareError = 0.0f;
@@ -60,13 +60,6 @@ Individual* CurveParams::crossOverAndMutate(Individual& other)
         {
             other.mutate();
         }
-
-        /*
-        a_new = getA()*alpha + (1 - alpha)*(pOther->getA());
-        b_new = getB()*alpha + (1 - alpha)*(pOther->getB());
-        c_new = getC()*alpha + (1 - alpha)*(pOther->getC());
-        d_new = getD()*alpha + (1 - alpha)*(pOther->getD());
-        */
 
         if( (getA() == 0.0f && *this > *pOther) || (pOther->getA() == 0.0f && *pOther > *this))
         {
@@ -117,10 +110,10 @@ Individual* CurveParams::crossOverAndMutate(Individual& other)
 
 void CurveParams::mutate()
 {
-    m_a += /*(m_a != 0.0f)?*/ Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal());// : 0.0f;
-    m_b += /*(m_b != 0.0f)?*/ Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal());// : 0.0f;
-    m_c += /*(m_c != 0.0f)?*/ Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal());// : 0.0f;
-    m_d += /*(m_d != 0.0f)?*/ Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal());// : 0.0f;
+    m_a += Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal());
+    m_b += Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal());
+    m_c += Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal());
+    m_d += Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal());
     setFitness(m_a, m_b, m_c, m_d, Controller::getSetOfPoints());
 }
 

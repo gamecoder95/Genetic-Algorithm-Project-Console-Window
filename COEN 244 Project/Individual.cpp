@@ -4,9 +4,9 @@
 #include "CurveParams.h"
 
 const float Individual::MUTATION_VAL_L = 0.25f;
-const float Individual::MUTATION_VAL_C = 0.1*CurveParams::PARAM_BOUND;
+const float Individual::MUTATION_VAL_C = 0.25*CurveParams::PARAM_BOUND;
 const float Individual::BOOSTED_MUTATION_VAL_L = 1.50f;
-const float Individual::BOOSTED_MUTATION_VAL_C = 0.3*CurveParams::PARAM_BOUND;
+const float Individual::BOOSTED_MUTATION_VAL_C = 0.5*CurveParams::PARAM_BOUND;
 
 float Individual::mutationVal = Individual::MUTATION_VAL_L;
 
@@ -26,36 +26,19 @@ float Individual::getMutationVal()
     return mutationVal;
 }
 
-Individual::Individual() : fitness(0.0f), fitnessPercent(0.0f)
+Individual::Individual() : fitness(0.0f)
 {
     // Default constructor, initialize fields to zero.
 }
 
-Individual::Individual(Individual& other) : fitness(other.getFitness()), fitnessPercent(other.getFitnessPercent())
+Individual::Individual(Individual& other) : fitness(other.getFitness())
 {
     // Copy constructor, initialize fields to the other's values.
-}
-
-Individual::~Individual()
-{
-
 }
 
 float Individual::getFitness() const
 {
     return fitness;
-}
-
-void Individual::setFitnessPercent(float sumAllFitness)
-{
-    // Since the fitter individual has a smaller fitness value,
-    // the fitness percent will be 100 - (fitness/sumAllFitness)*100%
-    fitnessPercent = 100 - (fitness/sumAllFitness)*100;
-}
-
-float Individual::getFitnessPercent() const
-{
-    return fitnessPercent;
 }
 
 // In both applications of the problem, the smaller fitness value is better
@@ -68,18 +51,6 @@ bool Individual::operator>(Individual& other)
 bool Individual::operator<(Individual& other)
 {
     return getFitness() > other.getFitness();
-}
-
-// In both applications of the problem, the smaller fitness value is better
-bool Individual::operator>=(Individual& other)
-{
-    return getFitness() <= other.getFitness();
-}
-
-// In both applications of the problem, the smaller fitness value is better
-bool Individual::operator<=(Individual& other)
-{
-    return getFitness() >= other.getFitness();
 }
 
 bool Individual::operator==(Individual& other)
@@ -95,7 +66,6 @@ bool Individual::operator!=(Individual& other)
 void Individual::operator=(Individual& other)
 {
     fitness = other.getFitness();
-    fitnessPercent = other.getFitnessPercent();
 }
 
 std::ostream& operator<<(std::ostream& out, Individual& indiv)

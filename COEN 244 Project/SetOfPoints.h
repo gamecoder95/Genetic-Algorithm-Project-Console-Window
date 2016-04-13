@@ -34,8 +34,12 @@ public:
 private:
     std::vector<Point> pointList;
     int m_numPoints;
+    PlotType m_plotType;
     static const int MIN_NUM_POINTS;
     static const int MAX_NUM_POINTS;
+    static const float FUNC_PLOT_PARAM_BOUND;
+    static const float FUNC_PLOT_X_INTERVAL;
+    static const float NOISE_BOUND;
 
     void generateEverywhere();
     void generateTopHalf();

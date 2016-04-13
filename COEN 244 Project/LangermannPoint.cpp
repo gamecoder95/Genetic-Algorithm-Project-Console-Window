@@ -7,8 +7,7 @@ const int LangermannPoint::B[5] = {5, 2, 1, 4, 9};
 const int LangermannPoint::C[5] = {1, 2, 5, 2, 3};
 const float LangermannPoint::PI = 3.14159265358979323846f;
 
-const float LangermannPoint::POINT_BOUND = 30.0f;/* Refers to page 17 of functions pdf, the limits of y and x on the graph.
-                                                     Used to initialize Langermann points in the algorithm.*/
+const float LangermannPoint::POINT_BOUND = 30.0f;
 
 LangermannPoint::LangermannPoint(LangermannPoint& other) : Individual(other), m_x(other.getX()), m_y(other.getY())
 {
@@ -40,6 +39,7 @@ Individual* LangermannPoint::crossOverAndMutate(Individual& other)
     if(LangermannPoint * pOther = dynamic_cast<LangermannPoint*>(p2Other))
     {
         // other was safely casted to LangermannPoint
+
         float x_new = 0.0f;
         float y_new = x_new;
 

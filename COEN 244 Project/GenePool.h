@@ -22,7 +22,6 @@ private:
 
 public:
     GenePool();
-    ~GenePool();
     void sortPool(); //Sorts the pool from greatest to least (in terms of fitness)
     void scramblePool();
     Individual& operator[](int index);

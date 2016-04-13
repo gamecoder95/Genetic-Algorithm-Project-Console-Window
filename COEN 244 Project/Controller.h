@@ -1,7 +1,6 @@
 #ifndef CONTROLLER_H_INCLUDED
 #define CONTROLLER_H_INCLUDED
 
-#include <cstdlib> // For rand() and srand()
 #include <ctime> // For time()
 #include <random> //For mt19937 (mersenne rng)
 #include <iostream>
@@ -16,6 +15,8 @@ public:
     static const double FRACTION;
     static const int DEFAULT_POP_SIZE;
     static const int MAX_GEN_COUNT;
+    static const int MAX_RIVAL_GEN_COUNT_L;
+    static const int MAX_RIVAL_GEN_COUNT_C;
     static int getRandNumInRange(int low, int high);
     static float getRandFloatInRange(float low, float high);
     static float getRandBtwZeroOne();
@@ -29,8 +30,9 @@ public:
     static void run();
     static bool terminationCondition();
     static void performParentSelection();
+    static void generateAndAddTwoOffspring();
     static void setProblemType(ProblemType type);
-    static inline ProblemType getProblemType();
+    static ProblemType getProblemType();
     static void setInitPopSize(int initSize);
     static int getInitPopSize();
     static SetOfPoints& getSetOfPoints();

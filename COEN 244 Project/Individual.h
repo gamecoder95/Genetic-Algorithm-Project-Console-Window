@@ -18,7 +18,6 @@ private:
 
 protected:
     float fitness;
-    float fitnessPercent;
 
 public:
 
@@ -33,20 +32,16 @@ public:
 
     Individual();
     Individual(Individual& other);
-    virtual ~Individual();
+    virtual ~Individual(){};
 
     virtual Individual* crossOverAndMutate(Individual& other) = 0;
     virtual void mutate() = 0;
 
     float getFitness() const;
-    void  setFitnessPercent(float sumAllFitness);
-    float getFitnessPercent() const;
 
     //Used to compare individuals based on fitness.
     bool operator>(Individual& other);
     bool operator<(Individual& other);
-    bool operator>=(Individual& other);
-    bool operator<=(Individual& other);
     bool operator==(Individual& other);
     bool operator!=(Individual& other);
     virtual void operator=(Individual& other);

@@ -3,10 +3,13 @@
 #include "CurveParams.h"
 
 std::mt19937 Controller::mersenne(static_cast<unsigned int>(time(0)));
+
 // Constant random fraction used for calculating numbers within range
-const double Controller::FRACTION = 1.0 / (static_cast<double>(mersenne.max()/*RAND_MAX*/) + 1.0);
+const double Controller::FRACTION = 1.0 / (static_cast<double>(mersenne.max()) + 1.0);
 const int Controller::DEFAULT_POP_SIZE = 100;
-const int Controller::MAX_GEN_COUNT = 300;
+const int Controller::MAX_GEN_COUNT = 500;
+const int Controller::MAX_RIVAL_GEN_COUNT_L = 25;
+const int Controller::MAX_RIVAL_GEN_COUNT_C = 5;
 
 Controller::ProblemType Controller::problemType = Controller::OPTIMIZATION;
 
@@ -28,15 +31,16 @@ IndivPtr Controller::fittestRivalOfSol;//Null
 void Controller::run()
 {
     initializePop();
-    //Display the initial population.
-    std::cout<<std::endl<<"The initial population is:"<<population;
-    char beginChar;
 
+    // If the application is the curve fitting one, display the set of points that the curve will try to fit.
     if(getProblemType() == Controller::CURVE_FITTING)
     {
         std::cout<<setOfPoints;
     }
+    std::cout<<std::endl<<"The initial population is:"<<std::endl<<population;
+    char beginChar;
 
+    // This allows the user to observe the initial population and/or set of points before beginning at his/her will.
     std::cout<<std::endl<<"Enter a character to begin the genetic algorithm: ";
     std::cin>>beginChar;
     std::cout<<std::endl;
@@ -46,21 +50,7 @@ void Controller::run()
         performParentSelection();
         while(offspringPool.size() < 10 * getInitPopSize())
         {
-            parentPool.scramblePool();
-            // Choose two random parents.
-            Individual* parent1 = &parentPool.getRandIndiv();
-            Individual* parent2 = &parentPool.getRandIndiv();
-
-            // Create two children from those parents.
-            Individual* child1 = parent1->crossOverAndMutate(*parent2);
-            Individual* child2 = parent1->crossOverAndMutate(*parent2);
-
-            // Add those children to the offspring pool.
-            offspringPool.pushBackIndiv(*child1);
-            offspringPool.pushBackIndiv(*child2);
-
-            delete child1;
-            delete child2;
+            generateAndAddTwoOffspring();
         }
 
         // Form the joint pool from the parent and offspring pools
@@ -76,6 +66,7 @@ void Controller::run()
             population.pushBackIndiv(jointPool[i]);
         }
         std::cout<<population;
+        std::cout<<"The fittest individual of all time is: "<<getSolution();
 
         //For formatting purposes.
         std::cout<<std::endl<<std::endl;
@@ -101,8 +92,9 @@ bool Controller::terminationCondition()
 {
     population.sortPool();
     Individual::resetMutationVal();
+    // After sorting, the first individual is the fittest.
 
-    // After sorting, the first is the fittest
+    // Initialize the solution to the fittest member of the population.
     if(&getSolution() == nullptr)
     {
         setSolution(population[0]);
@@ -113,38 +105,69 @@ bool Controller::terminationCondition()
     {
         bool needAdjustments = false;
 
-        if(getSolution() < population[0])
+        if(getProblemType() == Controller::OPTIMIZATION)
         {
-            setSolution(population[0]);
-            return false;
-        }
-        else if(getSolution() == population[0])
-        {
-            // If the solution saved from last generation is the same,
-            // add half the population size of new individuals.
-            // Also, boost the mutation value for more variety.
-            needAdjustments = true;
-            Individual::boostMutationVal();
-
-            // Reset the rival count if the fittest member is no longer equal to the rival but to the solution.
-            if(rivalGenCount > 0)
+            /*
+                The goal here is to get the point that produces the lowest value for the function.
+                If the fittest member of the new population is fitter than the solution,
+                set the solution to that member.
+                Since there is no longer a rival to the solution, reset the rival generation count.
+            */
+            if(getSolution() < population[0])
             {
-                rivalGenCount = 0;
-            }
-        }
-        else if(getSolution() > population[0])
-        {
-            if(&getRival() == nullptr)
-            {
-                setRival(population[0]);
-            }
-            else if(getRival() == population[0])
-            {
-                if(rivalGenCount < 5)
+                setSolution(population[0]);
+                if(rivalGenCount > 0)
                 {
-                    if(++rivalGenCount > 2)
+                    rivalGenCount = 0;
+                }
+                return false;
+            }
+            else if(getSolution() == population[0])
+            {
+                /*
+                    If the solution saved from last generation is the same,
+                    adjust the population, and boost the mutation value for more variety.
+                */
+                needAdjustments = true;
+                Individual::boostMutationVal();
+
+                // Reset the rival count if the fittest member is no longer equal to the rival but to the solution.
+                if(rivalGenCount > 0)
+                {
+                    rivalGenCount = 0;
+                }
+            }
+            else if(getSolution() > population[0])
+            {
+                /*
+                    If the solution is fitter than the fittest member of the present generation,
+                    we want to see if we can, after a few generations, produce a fitter solution.
+
+                    If there is no rival currently set the rival to the fittest member of the present generation.
+
+                    Otherwise, check to see if the rival is equal to the fittest member of the present generation.
+                    If it is for a few generations, adjust the population. If after double that number, the solution
+                    saved is still the fittest, terminate.
+
+                    If the rival is not equal to the fittest member of the present generation, then terminate then,
+                    as we are getting not going anywhere if that is the case.
+                */
+                if(&getRival() == nullptr)
+                {
+                    setRival(population[0]);
+                }
+                else if(getRival() == population[0])
+                {
+                    if(rivalGenCount < MAX_RIVAL_GEN_COUNT_L)
                     {
-                        needAdjustments = true;
+                        if(++rivalGenCount > MAX_RIVAL_GEN_COUNT_L/2)
+                        {
+                            needAdjustments = true;
+                        }
+                    }
+                    else
+                    {
+                        return true;
                     }
                 }
                 else
@@ -152,12 +175,47 @@ bool Controller::terminationCondition()
                     return true;
                 }
             }
+        }
+        else
+        {
+            /*
+                The goal here is to get the curve with a fitness as close as possible to zero.
+                If the fittest member of the new population is fitter than the solution,
+                set the solution to that member.
+                Since there is no longer a rival to the solution, reset the rival generation count.
+            */
+            if(getSolution() < population[0])
+            {
+                setSolution(population[0]);
+                rivalGenCount = 0;
+            }
             else
             {
-                return true;
+                /*
+                    Otherwise, adjust the population.
+                    If the solution is fitter than the fittest of the new population, keep incrementing the rival generation
+                    count. This is so that a chance to the later generations to produce a more worthy individual is given.
+                    If the solution is equal to the fittest, or if after a few generations, the solution is still the fittest,
+                    then boost the mutation constant. If after a lot of generations, no fitter solution is produced, then terminate.
+                */
+                needAdjustments = true;
+                if(getSolution() > population[0])
+                {
+                    ++rivalGenCount;
+                }
+                if(getSolution() == population[0]
+                   || (getSolution() > population[0] && rivalGenCount >= MAX_RIVAL_GEN_COUNT_C/5))
+                {
+                    Individual::boostMutationVal();
+                    if(rivalGenCount >= MAX_RIVAL_GEN_COUNT_C)
+                    {
+                        return true;
+                    }
+                }
             }
         }
 
+        // If needed, adjust the population by replacing the bottom half of the population with fresh, new individuals.
         if(needAdjustments)
         {
             for(int i = population.size()/2; i < population.size(); ++i)
@@ -166,12 +224,16 @@ bool Controller::terminationCondition()
             }
         }
 
-        std::cout<<"Mutation value = "<<Individual::getMutationVal()<<std::endl;
+        // Scramble the pool to reduce selection pressure.
         population.scramblePool();
         return false;
     }
     else
     {
+        /*
+            If the number of generations passed is greater or equal to the limit, terminate.
+            Too many generations passing with barely any change won't produce any more significant results.
+        */
         return true;
     }
 }
@@ -179,18 +241,49 @@ bool Controller::terminationCondition()
 void Controller::performParentSelection()
 {
      parentPool.clear();
+
+     // Scramble the pool to further randomize selection.
      population.scramblePool();
+
+     /*
+        Until the parent pool is half the size of the population,
+        randomly choose two individuals, and add the fitter out of the
+        two if they aren't equal to each other.
+     */
      while(parentPool.size() < population.size()/2)
      {
-         Individual * candidateA = &population.getRandIndiv();
-         Individual * candidateB = &population.getRandIndiv();
+         Individual& candidateA = population.getRandIndiv();
+         Individual& candidateB = population.getRandIndiv();
 
-         if(*candidateA != *candidateB)
+         if(candidateA != candidateB)
          {
-             parentPool.pushBackIndiv((*candidateA > *candidateB)? *candidateA : *candidateB);
+             parentPool.pushBackIndiv((candidateA > candidateB)? candidateA : candidateB);
          }
      }
 
+}
+
+void Controller::generateAndAddTwoOffspring()
+{
+    if(parentPool.size() > 0)
+    {
+        parentPool.scramblePool();
+
+        // Choose two random parents.
+        Individual* parent1 = &parentPool.getRandIndiv();
+        Individual* parent2 = &parentPool.getRandIndiv();
+
+        // Create two children from those parents.
+        Individual* child1 = parent1->crossOverAndMutate(*parent2);
+        Individual* child2 = parent1->crossOverAndMutate(*parent2);
+
+        // Add those children to the offspring pool.
+        offspringPool.pushBackIndiv(*child1);
+        offspringPool.pushBackIndiv(*child2);
+
+        delete child1;
+        delete child2;
+    }
 }
 
 void Controller::setProblemType(Controller::ProblemType type)
@@ -198,7 +291,7 @@ void Controller::setProblemType(Controller::ProblemType type)
     problemType = type;
 }
 
-inline Controller::ProblemType Controller::getProblemType()
+Controller::ProblemType Controller::getProblemType()
 {
     return problemType;
 }
@@ -263,12 +356,12 @@ int Controller::getRandNumInRange(int low, int high)
 
 float Controller::getRandFloatInRange(float low, float high)
 {
-    return low + static_cast<float>(mersenne()) / (static_cast<float>(/*RAND_MAX*/ mersenne.max()/(high - low)));
+    return low + static_cast<float>(mersenne()) / (static_cast<float>(mersenne.max()/(high - low)));
 }
 
 float Controller::getRandBtwZeroOne()
 {
-    return static_cast<float>(mersenne()) / static_cast<float>(/*RAND_MAX*/ mersenne.max());
+    return static_cast<float>(mersenne()) / static_cast<float>(mersenne.max());
 }
 
 void Controller::initializePop()
@@ -283,11 +376,13 @@ IndivPtr Controller::generateIndiv()
 {
     if(getProblemType() == Controller::OPTIMIZATION)
     {
-        return IndivPtr(new LangermannPoint(getRandFloatInRange(0.0f, LangermannPoint::POINT_BOUND),
-                                            getRandFloatInRange(0.0f, LangermannPoint::POINT_BOUND)));
+        // Generate a point between the LangermannPoint bounds.
+        return IndivPtr(new LangermannPoint(getRandFloatInRange(-LangermannPoint::POINT_BOUND, LangermannPoint::POINT_BOUND),
+                                            getRandFloatInRange(-LangermannPoint::POINT_BOUND, LangermannPoint::POINT_BOUND)));
     }
     else
     {
+        // Generate a random number between 0 and ten to increase variety in the curves generated.
         int paramToTakeOut = getRandNumInRange(0, 10);
 
         //Add a curve with parameters missing depending on paramToTakeOut.
