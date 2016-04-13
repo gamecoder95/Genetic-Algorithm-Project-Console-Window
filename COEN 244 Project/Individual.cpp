@@ -3,19 +3,22 @@
 #include "LangermannPoint.h"
 #include "CurveParams.h"
 
-const float Individual::MUTATION_VAL = 0.25f;
-const float Individual::BOOSTED_MUTATION_VAL = 1.50f;
+const float Individual::MUTATION_VAL_L = 0.25f;
+const float Individual::MUTATION_VAL_C = 0.1*CurveParams::PARAM_BOUND;
+const float Individual::BOOSTED_MUTATION_VAL_L = 1.50f;
+const float Individual::BOOSTED_MUTATION_VAL_C = 0.3*CurveParams::PARAM_BOUND;
 
-float Individual::mutationVal = Individual::MUTATION_VAL;
+float Individual::mutationVal = Individual::MUTATION_VAL_L;
 
 void Individual::resetMutationVal()
 {
-    mutationVal = MUTATION_VAL;
+    mutationVal = (Controller::getProblemType() == Controller::OPTIMIZATION)? MUTATION_VAL_L : MUTATION_VAL_C;
 }
 
 void Individual::boostMutationVal()
 {
-    mutationVal = BOOSTED_MUTATION_VAL;
+    mutationVal = (Controller::getProblemType() == Controller::OPTIMIZATION)? BOOSTED_MUTATION_VAL_L
+                                                                            : BOOSTED_MUTATION_VAL_C;
 }
 
 float Individual::getMutationVal()

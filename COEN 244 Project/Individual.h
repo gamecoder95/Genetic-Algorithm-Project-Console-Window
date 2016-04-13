@@ -22,8 +22,11 @@ protected:
 
 public:
 
-    static const float MUTATION_VAL;// = 0.25
-    static const float BOOSTED_MUTATION_VAL;// = 1.5
+    static const float MUTATION_VAL_L;
+    static const float MUTATION_VAL_C;
+    static const float BOOSTED_MUTATION_VAL_L;
+    static const float BOOSTED_MUTATION_VAL_C;
+
     static void resetMutationVal();
     static void boostMutationVal();
     static float getMutationVal();

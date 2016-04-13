@@ -25,7 +25,6 @@ public:
     };
 
     SetOfPoints();
-    SetOfPoints(PlotType plotType);
     void generateRandPoints(PlotType plotType);
     Point& operator[](int index);
     int size() const;

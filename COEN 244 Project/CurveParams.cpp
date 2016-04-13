@@ -1,7 +1,7 @@
 #include "CurveParams.h"
 #include "Controller.h"
 
-const float CurveParams::PARAM_BOUND = 30.0f; //Arbitrary parameter value for initializing curves
+const float CurveParams::PARAM_BOUND = 100.0f; //Arbitrary parameter value for initializing curves
 
 CurveParams::CurveParams(CurveParams& other) : Individual(other), m_a(other.getA()), m_b(other.getB()),
                                                                   m_c(other.getC()), m_d(other.getD())
@@ -117,10 +117,10 @@ Individual* CurveParams::crossOverAndMutate(Individual& other)
 
 void CurveParams::mutate()
 {
-    m_a += (m_a != 0.0f)? Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal()) : 0.0f;
-    m_b += (m_b != 0.0f)? Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal()) : 0.0f;
-    m_c += (m_c != 0.0f)? Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal()) : 0.0f;
-    m_d += (m_d != 0.0f)? Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal()) : 0.0f;
+    m_a += /*(m_a != 0.0f)?*/ Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal());// : 0.0f;
+    m_b += /*(m_b != 0.0f)?*/ Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal());// : 0.0f;
+    m_c += /*(m_c != 0.0f)?*/ Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal());// : 0.0f;
+    m_d += /*(m_d != 0.0f)?*/ Controller::getRandFloatInRange(-Individual::getMutationVal(), Individual::getMutationVal());// : 0.0f;
     setFitness(m_a, m_b, m_c, m_d, Controller::getSetOfPoints());
 }
 

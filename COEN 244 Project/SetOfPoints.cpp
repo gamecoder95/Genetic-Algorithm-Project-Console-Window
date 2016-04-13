@@ -4,15 +4,12 @@
 
 const int SetOfPoints::MIN_NUM_POINTS = 20;
 const int SetOfPoints::MAX_NUM_POINTS = 100;
-const float SetOfPoints::BOUND = 100;
+const float SetOfPoints::BOUND = 200;
 
-SetOfPoints::SetOfPoints() : SetOfPoints(SetOfPoints::EVERYWHERE)
+SetOfPoints::SetOfPoints()
 {
-    // Default constructor
-}
-
-SetOfPoints::SetOfPoints(SetOfPoints::PlotType plotType)
-{
+    PlotType plotType = static_cast<PlotType>(Controller::getRandNumInRange(SetOfPoints::EVERYWHERE, SetOfPoints::CUBIC));
+    std::cout<<plotType<<std::endl;
     generateRandPoints(plotType);
 }
 
@@ -289,10 +286,10 @@ void SetOfPoints::generateOnQuadrant(int quadrant)
 
 void SetOfPoints::generateLinear()
 {
-    float slope = Controller::getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND);
-    for(int i = 0; i < m_numPoints; ++i)
+    float slope = Controller::getRandFloatInRange(-5, 5);
+    for(int i = 0; i < m_numPoints/2; ++i)
     {
-        float x = static_cast<float>(25 * i);
+        float x = static_cast<float>(5 * i);
         float y = slope * x;
         pointList.push_back(Point(x, y + Controller::getRandFloatInRange(-25, 25)));
 
@@ -305,11 +302,11 @@ void SetOfPoints::generateLinear()
 
 void SetOfPoints::generateParabola()
 {
-    float a = Controller::getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND);
-    float h = Controller::getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND);
-    float k = Controller::getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND);
+    float a = Controller::getRandFloatInRange(-5, 5);
+    float h = Controller::getRandFloatInRange(-5, 5);
+    float k = Controller::getRandFloatInRange(-5, 5);
 
-    for(int i = 0; i < m_numPoints; ++i)
+    for(int i = 0; i < m_numPoints/2; ++i)
     {
         float x = static_cast<float>(25 * i);
         float y = a * (x - h)*(x - h) + k;
@@ -324,12 +321,12 @@ void SetOfPoints::generateParabola()
 
 void SetOfPoints::generateCubic()
 {
-    float a = Controller::getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND);
-    float b = Controller::getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND);
-    float c = Controller::getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND);
-    float d = Controller::getRandFloatInRange(-CurveParams::PARAM_BOUND, CurveParams::PARAM_BOUND);
+    float a = Controller::getRandFloatInRange(-5, 5);
+    float b = Controller::getRandFloatInRange(-5, 5);
+    float c = Controller::getRandFloatInRange(-5, 5);
+    float d = Controller::getRandFloatInRange(-5, 5);
 
-    for(int i = 0; i < m_numPoints; ++i)
+    for(int i = 0; i < m_numPoints/2; ++i)
     {
         float x = static_cast<float>(25 * i);
         float y1 = a*x*x*x + b*x*x + c*x + d;

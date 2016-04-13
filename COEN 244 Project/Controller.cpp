@@ -6,7 +6,7 @@ std::mt19937 Controller::mersenne(static_cast<unsigned int>(time(0)));
 // Constant random fraction used for calculating numbers within range
 const double Controller::FRACTION = 1.0 / (static_cast<double>(mersenne.max()/*RAND_MAX*/) + 1.0);
 const int Controller::DEFAULT_POP_SIZE = 100;
-const int Controller::MAX_GEN_COUNT = 200;
+const int Controller::MAX_GEN_COUNT = 300;
 
 Controller::ProblemType Controller::problemType = Controller::OPTIMIZATION;
 
@@ -19,7 +19,7 @@ GenePool Controller::parentPool;
 GenePool Controller::offspringPool;
 GenePool Controller::jointPool;
 
-SetOfPoints Controller::setOfPoints(SetOfPoints::EVERYWHERE);
+SetOfPoints Controller::setOfPoints;
 
 IndivPtr Controller::solution;//Null
 IndivPtr Controller::fittestRivalOfSol;//Null
@@ -103,7 +103,7 @@ bool Controller::terminationCondition()
     Individual::resetMutationVal();
 
     // After sorting, the first is the fittest
-    if(generationCount <= 1)
+    if(&getSolution() == nullptr)
     {
         setSolution(population[0]);
         population.scramblePool();
@@ -111,7 +111,8 @@ bool Controller::terminationCondition()
     }
     else if(generationCount < MAX_GEN_COUNT)
     {
-        bool needMoreGuys = false;
+        bool needAdjustments = false;
+
         if(getSolution() < population[0])
         {
             setSolution(population[0]);
@@ -121,33 +122,34 @@ bool Controller::terminationCondition()
         {
             // If the solution saved from last generation is the same,
             // add half the population size of new individuals.
-            needMoreGuys = true;
+            // Also, boost the mutation value for more variety.
+            needAdjustments = true;
             Individual::boostMutationVal();
 
+            // Reset the rival count if the fittest member is no longer equal to the rival but to the solution.
+            if(rivalGenCount > 0)
+            {
+                rivalGenCount = 0;
+            }
         }
         else if(getSolution() > population[0])
         {
-            if(&getRival() == nullptr || rivalGenCount == 0)
+            if(&getRival() == nullptr)
             {
-                std::cout<<"HERE 0!"<<std::endl;
-                setRival(population[0]);;
-                rivalGenCount = 1;
+                setRival(population[0]);
             }
             else if(getRival() == population[0])
             {
-                std::cout<<"HERE 1"<<std::endl;
-
-                if(rivalGenCount <= 3)
+                if(rivalGenCount < 5)
                 {
-                    std::cout<<"HERE 2"<<std::endl;
-                    ++rivalGenCount;
+                    if(++rivalGenCount > 2)
+                    {
+                        needAdjustments = true;
+                    }
                 }
                 else
                 {
-                    std::cout<<"HERE 3"<<std::endl;
-                    rivalGenCount = 0;
-                    needMoreGuys = true;
-                    Individual::boostMutationVal();
+                    return true;
                 }
             }
             else
@@ -156,13 +158,15 @@ bool Controller::terminationCondition()
             }
         }
 
-        if(needMoreGuys)
+        if(needAdjustments)
         {
             for(int i = population.size()/2; i < population.size(); ++i)
             {
                 population[i] = *generateIndiv();
             }
         }
+
+        std::cout<<"Mutation value = "<<Individual::getMutationVal()<<std::endl;
         population.scramblePool();
         return false;
     }
