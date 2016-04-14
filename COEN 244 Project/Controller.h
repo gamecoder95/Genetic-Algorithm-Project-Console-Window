@@ -28,9 +28,6 @@ public:
     };
 
     static void run();
-    static bool terminationCondition();
-    static void performParentSelection();
-    static void generateAndAddTwoOffspring();
     static void setProblemType(ProblemType type);
     static ProblemType getProblemType();
     static void setInitPopSize(int initSize);
@@ -38,7 +35,7 @@ public:
     static SetOfPoints& getSetOfPoints();
     static void setSolution(Individual& sol);
     static Individual& getSolution();
-    static void setRival(Individual& sol);
+    static void setRival(Individual& rival);
     static Individual& getRival();
 
 private:
@@ -61,6 +58,9 @@ private:
 
     static void initializePop();
     static IndivPtr generateIndiv();
+    static bool terminationCondition();
+    static void performParentSelection();
+    static void generateAndAddTwoOffspring();
 };
 
 #endif // CONTROLLER_H_INCLUDED

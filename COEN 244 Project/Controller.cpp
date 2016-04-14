@@ -332,15 +332,15 @@ Individual& Controller::getSolution()
     return *solution;
 }
 
-void Controller::setRival(Individual& sol)
+void Controller::setRival(Individual& rival)
 {
     if(problemType == Controller::OPTIMIZATION)
     {
-        fittestRivalOfSol = IndivPtr(new LangermannPoint(dynamic_cast<LangermannPoint&>(sol)));
+        fittestRivalOfSol = IndivPtr(new LangermannPoint(dynamic_cast<LangermannPoint&>(rival)));
     }
     else
     {
-        fittestRivalOfSol = IndivPtr(new CurveParams(dynamic_cast<CurveParams&>(sol)));
+        fittestRivalOfSol = IndivPtr(new CurveParams(dynamic_cast<CurveParams&>(rival)));
     }
 }
 

@@ -19,7 +19,7 @@
 1460426967 c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\point.h
 	<iostream>
 
-1460557241 c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\controller.h
+1460603332 c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\controller.h
 	<ctime>
 	<random>
 	<iostream>
@@ -48,7 +48,7 @@
 	"LangermannPoint.h"
 	"CurveParams.h"
 
-1460551704 source:c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\langermannpoint.cpp
+1460602996 source:c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\langermannpoint.cpp
 	"LangermannPoint.h"
 	"Controller.h"
 
@@ -65,7 +65,7 @@
 	"Controller.h"
 	<iostream>
 
-1460557015 source:c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\controller.cpp
+1460558770 source:c:\users\ahmad el-baher\documents\programming\code blocks projects\genetic-algorithm-project-console-window\coen 244 project\controller.cpp
 	"Controller.h"
 	"LangermannPoint.h"
 	"CurveParams.h"
