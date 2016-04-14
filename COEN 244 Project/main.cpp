@@ -43,11 +43,15 @@ int main()
     // Display result of choices, and allowing user to view them before beginning at his/her will.
     cout<<endl<<endl<<"You have chosen to view "<<((Controller::getProblemType() == Controller::OPTIMIZATION)? "Optimization" : "Curve Fitting");
     cout<<" with an initial population size of "<<Controller::getInitPopSize()<<endl;
-    cout<<"Enter a non-space character to begin: ";
+    cout<<"Enter a character to begin: ";
     cin>>choice; // Re-using choice to store the character to begin the program.
 
     // The entire algorithm is implemented in Controller, and is executed through this function.
     Controller::run();
+
+    // This is to prevent the executable from exiting immediately
+    cout<<endl<<endl<<"Enter character to exit the program: ";
+    cin>>choice; // Re-using choice to store the character to exit the program.
 
     return 0;
 }
